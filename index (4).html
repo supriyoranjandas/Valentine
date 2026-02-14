@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>For My Mayalu ❤️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Confetti -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
+  <!-- Fireworks -->
+  <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.x/dist/index.umd.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .card {
+      background: white;
+      padding: 28px;
+      border-radius: 22px;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+      max-width: 95%;
+      width: 420px;
+      position: relative;
+      z-index: 10;
+    }
+
+    h1 { color: #e63946; }
+    p {
+      font-size: 17px;
+      line-height: 1.4;
+      margin: 12px 0;
+      color: #333;
+    }
+
+    button {
+      font-size: 17px;
+      padding: 12px 28px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      margin: 8px;
+      transition: transform 0.2s;
+    }
+    button:active { transform: scale(0.95); }
+
+    #yesBtn, .primary {
+      background: #e63946;
+      color: white;
+    }
+    #noBtn {
+      background: #adb5bd;
+      color: white;
+      position: absolute;
+    }
+
+    /* Floating hearts */
+    .heart {
+      position: fixed;
+      width: 18px;
+      height: 18px;
+      background: red;
+      transform: rotate(45deg);
+      animation: floatUp 3s ease-out forwards;
+      pointer-events: none;
+      z-index: 998;
+    }
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: red;
+      border-radius: 50%;
+      top: -9px;
+      left: 0;
+    }
+    .heart::after { left: 9px; }
+
+    @keyframes floatUp {
+      from { opacity: 1; transform: translateY(0) rotate(45deg); }
+      to { opacity: 0; transform: translateY(-220px) rotate(45deg); }
+    }
+
+    /* Memories */
+    .photos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .photos img {
+      width: 100%;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="fireworks" class="overlay"></div>
+
+<div class="card">
+
+  <div id="step1">
+    <h1>Will you be my Valentine, Mayalu? 💖</h1>
+    <button id="yesBtn">Yes ❤️</button>
+    <button id="noBtn">No 😒</button>
+  </div>
+
+  <div id="step2" style="display:none;">
+    <h1>Best decision ever made in life 💖</h1>
+    <p>
+      Thank you for standing by me, supporting me,
+      and believing in me during my toughest times.
+    </p>
+    <p>
+      Pata nei oo 😌 · wakai lagyo sa 🤍 · ki korcho babumoshai 😄
+    </p>
+    <button class="primary" id="toProposal">One more thing… 🥺</button>
+  </div>
+
+  <div id="step3" style="display:none;">
+    <h1>Mayalu… 💍</h1>
+    <p>
+      Loving you is the best decision of my life.<br>
+      Choosing you forever would be my greatest achievement.
+    </p>
+    <p><strong>Will you be my wife someday?</strong> 😭❤️</p>
+    <button class="primary" id="finalYes">YES, obviously! 😍</button>
+  </div>
+
+  <div id="step4" style="display:none;">
+    <h1>She says YES!!! 🎉💍</h1>
+    <p>
+      You just made me the happiest man alive 🥹❤️<br>
+      I promise to love you, respect you,
+      and stand by you forever.
+    </p>
+    <p style="margin-top:18px;">
+      — <strong>Supriyo Das</strong>
+    </p>
+
+    <h2>Our memories 📸</h2>
+    <div class="photos">
+      <!-- Replace with your own photos -->
+      <img src="https://via.placeholder.com/300x300?text=Photo+1">
+      <img src="https://via.placeholder.com/300x300?text=Photo+2">
+      <img src="https://via.placeholder.com/300x300?text=Photo+3">
+      <img src="https://via.placeholder.com/300x300?text=Photo+4">
+    </div>
+  </div>
+
+</div>
+
+<audio id="music" src="music.mp3"></audio>
+
+<script>
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn = document.getElementById("noBtn");
+  const step1 = document.getElementById("step1");
+  const step2 = document.getElementById("step2");
+  const step3 = document.getElementById("step3");
+  const step4 = document.getElementById("step4");
+  const music = document.getElementById("music");
+
+  const tease = [
+    "Pata nei oo 😝",
+    "wakai lagyo sa 😏",
+    "ki korcho babumoshai 😂",
+    "Socho ache se 😜",
+    "Pakad ke dikhao 😆"
+  ];
+
+  function moveNo() {
+    noBtn.textContent = tease[Math.floor(Math.random() * tease.length)];
+    noBtn.style.left = Math.random() * (window.innerWidth - 120) + "px";
+    noBtn.style.top = Math.random() * (window.innerHeight - 60) + "px";
+  }
+
+  noBtn.addEventListener("mouseover", moveNo);
+  noBtn.addEventListener("click", moveNo);
+
+  yesBtn.onclick = () => {
+    step1.style.display = "none";
+    step2.style.display = "block";
+    music.play().catch(()=>{});
+  };
+
+  document.getElementById("toProposal").onclick = () => {
+    step2.style.display = "none";
+    step3.style.display = "block";
+  };
+
+  document.getElementById("finalYes").onclick = () => {
+    step3.style.display = "none";
+    step4.style.display = "block";
+    launchConfetti();
+    launchFireworks();
+  };
+
+  function launchConfetti() {
+    const end = Date.now() + 3000;
+    (function frame() {
+      confetti({ particleCount: 5, spread: 70, origin: { x: Math.random(), y: 0.6 } });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+  }
+
+  function launchFireworks() {
+    const fw = new Fireworks(document.getElementById("fireworks"));
+    fw.start();
+    setTimeout(() => fw.stop(), 6000);
+  }
+
+  setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.style.left = Math.random() * window.innerWidth + "px";
+    h.style.top = window.innerHeight + "px";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 3000);
+  }, 700);
+
+  moveNo();
+</script>
+
+</body>
+</html>
